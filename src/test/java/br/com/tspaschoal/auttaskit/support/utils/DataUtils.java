@@ -1,4 +1,4 @@
-package br.com.tspaschoal.auttaskit.support;
+package br.com.tspaschoal.auttaskit.support.utils;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
