@@ -1,0 +1,10 @@
+shouldTestAddMoreDataAboutYou,user,password,type,contact,message
+                                                      ,thiago,123456,E-mail,thiago001@email.com.br,"Your contact has been added!"
+                                                      ,thiago,123456,E-mail,thiago002@email.com.br,"Your contact has been added!"
+                                                      ,thiago,123456,E-mail,thiago003@email.com.br,"Your contact has been added!"
+                                                      ,thiago,123456,Phone,1194012345,"Your contact has been added!"
+                                                      ,thiago,123456,Phone,1194012345,"Your contact has been added!"
+shouldTestRemoveContact,user,password,type,contact,message
+                                        ,thiago,123456,E-mail,thiago004@email.com.br,"Rest in peace, dear email!"
+                                        ,thiago,123456,E-mail,thiago005@email.com.br,"Rest in peace, dear email!"
+                                        ,thiago,123456,Phone,1194012346,"Rest in peace, dear phone!"

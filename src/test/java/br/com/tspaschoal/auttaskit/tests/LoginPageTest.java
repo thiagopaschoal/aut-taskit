@@ -1,18 +1,22 @@
 package br.com.tspaschoal.auttaskit.tests;
 
-import br.com.tspaschoal.auttaskit.support.DataUtils;
-import br.com.tspaschoal.auttaskit.support.ImageScreenshot;
-import org.hamcrest.CoreMatchers;
+import br.com.tspaschoal.auttaskit.pages.HomePage;
+import br.com.tspaschoal.auttaskit.support.DriverManagerFactory;
+import br.com.tspaschoal.auttaskit.support.utils.DataUtils;
+import org.easetech.easytest.annotation.DataLoader;
+import org.easetech.easytest.annotation.Param;
+import org.easetech.easytest.runner.DataDrivenTestRunner;
 import org.junit.*;
 import org.junit.rules.TestName;
-import org.junit.rules.TestRule;
-import org.openqa.selenium.By;
+import org.junit.runner.RunWith;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
-import org.openqa.selenium.firefox.FirefoxDriver;
 
-import java.util.concurrent.TimeUnit;
+import static br.com.tspaschoal.auttaskit.support.ImageScreenshot.takePicture;
+import static br.com.tspaschoal.auttaskit.support.enums.DriverType.CHROME;
+import static org.hamcrest.CoreMatchers.is;
 
+@RunWith(DataDrivenTestRunner.class)
+@DataLoader(filePaths =  "data/LoginPageTest.csv" )
 public class LoginPageTest {
 
     @Rule
@@ -22,39 +26,43 @@ public class LoginPageTest {
 
     @Before
     public void setUp() {
-        System.setProperty("webdriver.gecko.driver", "src/test/resources/drivers/geckodriver");
-        this.webDriver = new FirefoxDriver();
-        this.webDriver.manage().timeouts().implicitlyWait(5, TimeUnit.SECONDS);
+        this.webDriver = DriverManagerFactory.getDriver(CHROME);
         this.webDriver.get("http://www.juliodelima.com.br/taskit/");
     }
 
     @Test
-    public void shouldTestLoginSuccess() {
-        this.webDriver.findElement(By.linkText("Sign in")).click();
+    public void shouldTestLoginSuccess(@Param(name="user") String user,
+                                       @Param(name="password") String password,
+                                       @Param(name="message") String expectedMessage) {
 
-        final WebElement formSignInBox = this.webDriver.findElement(By.id("signinbox"));
-        formSignInBox.findElement(By.name("login")).sendKeys("thiago");
-        formSignInBox.findElement(By.name("password")).sendKeys("123456");
-        formSignInBox.findElement(By.linkText("SIGN IN")).click();
+        final String meLabel = new HomePage(this.webDriver)
+                .clickSignIn()
+                .typeLogin(user)
+                .typePassword(password)
+                .clickSignIn()
+                .getUserLoggedFromHeader()
+                .getText();
 
-        final String meLabel = this.webDriver.findElement(By.className("me")).getText();
-        ImageScreenshot.takePicture(this.webDriver, DataUtils.getTimestamp() + "_" + testName.getMethodName() + ".png");
-        Assert.assertThat(meLabel, CoreMatchers.is("Hi, Thiago Paschoal"));
+        takePicture(this.webDriver, DataUtils.getTimestamp() + "_" + testName.getMethodName() + ".png");
+        Assert.assertThat(meLabel, is(expectedMessage));
     }
 
     @Test
-    public void shouldTestShowToastMessageWhenLoginAndPasswordAreInvalid() {
-        this.webDriver.findElement(By.linkText("Sign in")).click();
+    public void shouldTestShowToastMessageWhenLoginAndPasswordAreInvalid(
+            @Param(name="user") String user,
+            @Param(name="password") String password,
+            @Param(name="message") String expectedMessage
+    ) {
 
-        final WebElement formSignInBox = this.webDriver.findElement(By.id("signinbox"));
-        formSignInBox.findElement(By.name("login")).sendKeys("thiago@#$");
-        formSignInBox.findElement(By.name("password")).sendKeys("1236789");
-        formSignInBox.findElement(By.linkText("SIGN IN")).click();
+        final String toastMessage = new HomePage(this.webDriver)
+                .clickSignIn()
+                .typeLogin(user)
+                .typePassword(password)
+                .clickSignIn()
+                .getToast().getText();
 
-        ImageScreenshot.takePicture(this.webDriver, DataUtils.getTimestamp() + "_" + testName.getMethodName() + ".png");
-
-        final String toastMessage = this.webDriver.findElement(By.id("toast-container")).getText();
-        Assert.assertThat(toastMessage, CoreMatchers.is("Maybe you brain dropped the password or login in some place!"));
+        takePicture(this.webDriver, DataUtils.getTimestamp() + "_" + testName.getMethodName() + ".png");
+        Assert.assertThat(toastMessage, is(expectedMessage));
     }
 
     @After

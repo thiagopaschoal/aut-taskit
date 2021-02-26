@@ -1,0 +1,4 @@
+shouldTestLoginSuccess,user,password,message
+                                       ,thiago,123456,"Hi, Thiago Paschoal"
+shouldTestShowToastMessageWhenLoginAndPasswordAreInvalid,user,password,message
+                                                                                                         ,thiagoSP,12356,"Maybe you brain dropped the password or login in some place!"
